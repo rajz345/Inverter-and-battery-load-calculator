@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inverter &amp; Battery Calculator | Rajkumar Auto Electricals</title>
+<style>
+
+:root{
+  --bg:#f5f7fb;--card:#ffffff;--ink:#172033;--muted:#68738a;--line:#e4e9f2;
+  --brand:#f26722;--brand-dark:#d94d0d;--navy:#111b32;--navy-soft:#1b2946;
+  --success:#18845b;--warning:#b45309;--chip:#f0f3f9;--shadow:0 18px 45px rgba(21,35,62,.07);
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#0b1020;--card:#131b2e;--ink:#f0f4fc;--muted:#a2aec5;--line:#28344c;
+  --brand:#ff8a4c;--brand-dark:#f26722;--navy:#080d19;--navy-soft:#17233c;
+  --success:#65d6a5;--warning:#fbbf24;--chip:#1c2740;--shadow:0 18px 45px rgba(0,0,0,.18);
+  color-scheme:dark;
+}
+@media(prefers-color-scheme:dark){
+ :root:not([data-theme="light"]){--bg:#0b1020;--card:#131b2e;--ink:#f0f4fc;--muted:#a2aec5;--line:#28344c;--brand:#ff8a4c;--brand-dark:#f26722;--navy:#080d19;--navy-soft:#17233c;--success:#65d6a5;--warning:#fbbf24;--chip:#1c2740;--shadow:0 18px 45px rgba(0,0,0,.18);color-scheme:dark}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{margin:0;background:radial-gradient(ellipse at 12% 0%,rgba(242,103,34,.08),transparent 32%),var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+#wm{position:fixed;inset:0;pointer-events:none;z-index:50}
+header{position:relative;overflow:hidden;background:linear-gradient(125deg,var(--navy),var(--navy-soft));color:#fff;padding:30px 0 35px;border-bottom:0}
+header:after{content:"";position:absolute;width:360px;height:360px;right:-100px;top:-210px;border:1px solid rgba(255,255,255,.1);border-radius:50%;box-shadow:0 0 0 38px rgba(255,255,255,.025),0 0 0 78px rgba(255,255,255,.02);pointer-events:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+.hd{position:relative;z-index:1;display:flex;align-items:center;gap:16px}
+.logo{font-size:29px;background:linear-gradient(135deg,#ff8b4b,var(--brand));box-shadow:0 10px 24px rgba(242,103,34,.25);border-radius:16px;width:58px;height:58px;display:grid;place-items:center;flex:none}
+.hd h1{margin:0;font-size:clamp(21px,3vw,29px);line-height:1.2;letter-spacing:-.7px;font-weight:800}
+.hd p{margin:7px 0 0;font-size:14px;color:#c5cde0}
+main{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(340px,.88fr);gap:22px;padding:26px 0 32px;align-items:start}
+.card{min-width:0;background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:var(--shadow)}
+.card h2{margin:0 0 16px;font-size:18px;letter-spacing:-.35px;font-weight:750}
+.card h2:not(:first-child){margin-top:26px}
+.row{display:grid;grid-template-columns:1.6fr .9fr .6fr auto auto;gap:6px;align-items:center;margin-bottom:8px}
+.row.h{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.custom-appliance{margin:14px 0;padding:14px;background:var(--bg);border:1px solid var(--line);border-radius:14px}
+.custom-appliance h3{margin:0 0 10px;font-size:14px}
+.custom-fields{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(100px,.8fr) auto auto;gap:8px;align-items:end}
+.custom-fields label{font-size:11px;color:var(--muted);font-weight:650}
+.custom-fields label input:not([type=checkbox]){display:block;margin-top:4px}
+.custom-fields .motor-check{min-height:44px;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.custom-fields input[type=checkbox]{width:16px;height:16px;accent-color:var(--brand)}
+.custom-add{min-height:44px}
+input,select{width:100%;min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:11px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px;outline:none;transition:border-color .18s,box-shadow .18s}
+input:focus,select:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(242,103,34,.13)}
+label.m{font-size:12px;display:flex;align-items:center;gap:4px;color:var(--muted);white-space:nowrap}
+label.m input{width:auto}
+button{cursor:pointer;border:0;border-radius:11px;padding:10px 14px;font:inherit;font-size:14px;font-weight:700;transition:transform .15s,filter .15s,background .15s}
+button:hover{filter:brightness(.98);transform:translateY(-1px)}
+button:focus-visible{outline:3px solid rgba(242,103,34,.35);outline-offset:2px}
+.x{background:transparent;color:var(--muted);padding:6px 8px}
+.add{background:var(--chip);color:var(--ink);border:1px solid var(--line)}
+.pri{background:linear-gradient(135deg,var(--brand),var(--brand-dark));color:#fff;width:100%;margin-top:12px;padding:13px 16px;box-shadow:0 8px 18px rgba(242,103,34,.2)}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 14px}
+.chips button{background:var(--chip);color:var(--ink);font-weight:600;font-size:12px;padding:7px 11px;border-radius:999px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:12px}
+.grid2>div span{font-size:12px;color:var(--muted);display:block;margin-bottom:7px;font-weight:650}
+.item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.item:last-of-type{border-bottom:0}
+.nm{min-width:0}.nm b{display:block;font-size:14px;font-weight:650;letter-spacing:-.1px}.nm small{color:var(--muted);font-size:12px;display:block;margin-top:2px}
+.step{display:flex;align-items:center;gap:9px;flex:none}
+.step button{width:35px;height:35px;padding:0;border-radius:12px;background:var(--chip);color:var(--ink);font-size:19px;line-height:1;border:1px solid var(--line)}
+.step button:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.step .q{min-width:22px;text-align:center;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums}.step .q.on{color:var(--brand)}
+.big{font-size:clamp(26px,3vw,34px);line-height:1.15;font-weight:850;letter-spacing:-1.2px;color:var(--brand);margin:5px 0 7px;font-variant-numeric:tabular-nums}
+.kv{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line);padding:11px 0;font-size:13px}
+.kv span{color:var(--muted)}.kv b{text-align:right;font-weight:750;font-variant-numeric:tabular-nums}
+.rec{background:linear-gradient(135deg,rgba(242,103,34,.09),rgba(242,103,34,.025));border:1px solid rgba(242,103,34,.18);border-radius:16px;padding:16px;margin:14px 0}
+.rec small{color:var(--muted);display:block;font-size:12px}
+.note{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.65}
+.qr{display:flex;gap:20px;align-items:center}
+.qrbox{background:#fff;padding:8px;border:1px solid var(--line);border-radius:14px;flex:none;line-height:0}
+.qrbox svg{width:136px;height:136px}
+.warn{color:var(--warning);background:rgba(180,83,9,.08);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px}
+.ok{color:var(--success);background:rgba(24,132,91,.08);border-radius:10px;padding:10px 12px;font-size:13px;margin-top:12px}
+.brandline{text-align:left;font-weight:800;letter-spacing:1.2px;color:var(--brand);margin:0 0 8px;font-size:11px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:0 20px 28px}
+footer b{color:var(--ink)}
+@media(max-width:900px){main{grid-template-columns:1fr;gap:18px}.card{padding:22px}.qr{grid-column:auto!important}}
+@media(max-width:560px){.wrap{padding:0 14px}header{padding:22px 0 25px}.hd{gap:12px}.logo{width:48px;height:48px;border-radius:14px;font-size:25px}.hd p{font-size:12px}main{padding:16px 0 24px;gap:14px}.card{padding:17px;border-radius:18px}.card h2{font-size:16px}.grid2{grid-template-columns:1fr;gap:12px}.custom-fields{grid-template-columns:1fr 1fr}.custom-fields .motor-check{grid-column:1}.custom-add{grid-column:2}.item{gap:8px;padding:10px 0}.nm b{font-size:13px}.nm small{font-size:11px}.step{gap:6px}.step button{width:32px;height:32px;border-radius:10px}.qr{align-items:flex-start;gap:12px}.qrbox svg{width:92px;height:92px}.big{font-size:28px}.kv{font-size:12px;gap:10px}.kv span{max-width:60%}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+@media print{body{background:#fff}header{padding:14px 0}button,.chips,.add,.x,#wm{display:none!important}main{display:block}.card{box-shadow:none;border:1px solid #ddd;margin-bottom:12px;break-inside:avoid}.wrap{max-width:none;padding:0 8px}}
+
+</style>
+</head>
+<body>
+<header><div class="wrap hd"><div class="logo">⚡</div><div><h1>Rajkumar Auto Electricals</h1><p>Smart sizing for home backup · Inverter &amp; battery calculator</p></div></div></header>
+<div class="wrap"><div id="root"></div></div>
+<footer><b>© 2026 Rajkumar Auto Electricals</b> · All rights reserved. Estimates only – confirm final selection at the shop.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/htm@3.1.1/dist/htm.umd.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+const BRAND="Rajkumar Auto Electricals";
+const APP_URL="https://rajkumar-auto.netlify.app";
+function qrSvg(){try{const q=window.qrcode(0,"M");q.addData(APP_URL);q.make();return q.createSvgTag(4,2);}catch(e){return "";}}
+const QR_SVG=qrSvg();
+const html=htm.bind(React.createElement);
+const {useState,useMemo}=React;
+const CATALOG=[
+{id:1,name:"LED bulb (9W)",watts:9,motor:0,qty:4},
+{id:2,name:"LED tube light / batten",watts:20,motor:0,qty:0},
+{id:3,name:"Ceiling fan (regular)",watts:75,motor:0,qty:3},
+{id:4,name:"Ceiling fan (BLDC)",watts:35,motor:0,qty:0},
+{id:5,name:"Table / pedestal fan",watts:55,motor:0,qty:0},
+{id:6,name:"Exhaust fan",watts:40,motor:0,qty:0},
+{id:7,name:"Air cooler",watts:180,motor:1,qty:0},
+{id:8,name:"LED TV 32 inch",watts:60,motor:0,qty:0},
+{id:9,name:"LED TV 43 inch",watts:100,motor:0,qty:0},
+{id:10,name:"Set-top box",watts:15,motor:0,qty:0},
+{id:11,name:"WiFi router",watts:12,motor:0,qty:0},
+{id:12,name:"Mobile charger",watts:10,motor:0,qty:0},
+{id:13,name:"Laptop",watts:65,motor:0,qty:0},
+{id:14,name:"Desktop PC + monitor",watts:250,motor:0,qty:0},
+{id:15,name:"CCTV camera + DVR",watts:40,motor:0,qty:0},
+{id:16,name:"Refrigerator (single door)",watts:150,motor:1,qty:0},
+{id:17,name:"Refrigerator (double door)",watts:200,motor:1,qty:0},
+{id:18,name:"Washing machine",watts:400,motor:1,qty:0},
+{id:19,name:"Water pump 0.5 HP",watts:375,motor:1,qty:0},
+{id:20,name:"Water pump 1 HP",watts:750,motor:1,qty:0},
+{id:21,name:"Mixer grinder",watts:500,motor:1,qty:0}
+];
+const SIZES=[600,700,850,900,1100,1250,1500,2000,3000,5000];
+let nid=Math.max(...CATALOG.map(c=>c.id))+1;
+const fmt=(n,d=0)=>Number(n).toLocaleString("en-IN",{maximumFractionDigits:d});
+
+function calc(rows,hours,type,ah,lf){
+  const conn=rows.reduce((s,r)=>s+(+r.watts||0)*(+r.qty||0),0);
+  const run=Math.round(conn*lf/100);
+  const extra=rows.reduce((m,r)=>r.motor&&+r.qty>0?Math.max(m,(+r.watts||0)*2):m,0);
+  if(!run||!(+hours>0))return null;
+  const peak=conn+extra;
+  const need=Math.max(conn/0.8*1.2,peak/1.2);
+  const va=SIZES.find(s=>s>=need)||Math.ceil(need/1000)*1000;
+  const volt=va<=2200?12:24;
+  const series=volt/12, dod=type==="lithium"?0.9:0.5, eff=0.85;
+  const wh=run*hours/eff;
+  const needAh=wh/(volt*dod);
+  const par=Math.max(1,Math.ceil(needAh/ah));
+  const total=series*par;
+  const cap=par*ah, backup=cap*volt*dod*eff/run;
+  return {conn,lf,run,peak,need,va,volt,series,par,total,cap,backup,wh,needAh,dod,charge:cap*0.1};
+}
+
+function wiring(r){
+  if(r.total===1)return "single battery";
+  if(r.series>1&&r.par>1)return r.series+" in series × "+r.par+" parallel strings";
+  if(r.series>1)return r.total+" batteries connected in series";
+  return r.total+" batteries connected in parallel";
+}
+function quote(r,rows,hours,type,ah,who){
+  const lines=rows.filter(x=>+x.qty>0).map(x=>`• ${x.name||"Appliance"}: ${x.watts}W × ${x.qty}`+(x.motor?" (motor)":""));
+  return [`${BRAND} – Inverter & Battery Quote`,who?`Customer: ${who}`:"",`Date: ${new Date().toLocaleDateString("en-IN")}`,"",...lines,"",
+   `Connected load: ${r.conn} W | Working load (${r.lf}%): ${r.run} W | Backup wanted: ${hours} h`,
+   `Inverter: ${fmt(r.va)} VA, ${r.volt}V system`,
+   `Battery: ${r.total} × 12V ${ah}Ah ${type==="lithium"?"LiFePO4":"tubular"} (${wiring(r)})`,
+   `Expected backup: about ${r.backup.toFixed(1)} h`,"",`– ${BRAND}`].filter((l,i)=>l!==""||i>0).join("\n");
+}
+
+function App(){
+  const [rows,setRows]=useState(CATALOG.map(c=>({...c})));
+  const [hours,setHours]=useState(4);
+  const [type,setType]=useState("tubular");
+  const [ah,setAh]=useState(150);
+  const [lf,setLf]=useState(50);
+  const [canDl,setCanDl]=useState(false);
+  const dlRef=React.useRef(null);
+  React.useEffect(()=>{try{if(window.claude&&window.claude.use){window.claude.use("downloads").then(d=>{dlRef.current=d;setCanDl(!!d);}).catch(()=>{});}}catch(e){}},[]);
+  const [who,setWho]=useState("");
+  const [copied,setCopied]=useState(false);
+  const [newName,setNewName]=useState("");
+  const [newWatts,setNewWatts]=useState("");
+  const [newMotor,setNewMotor]=useState(false);
+  const [applianceError,setApplianceError]=useState("");
+  const upd=(id,k,v)=>setRows(rs=>rs.map(r=>r.id===id?{...r,[k]:v}:r));
+  const add=(n="",w="",m=0)=>setRows(rs=>[...rs,{id:nid++,name:n,watts:w,qty:1,motor:m}]);
+  const addCustom=()=>{
+    const name=newName.trim(), watts=Number(newWatts);
+    if(!name||!Number.isFinite(watts)||watts<=0){setApplianceError("Enter an appliance name and a wattage greater than zero.");return;}
+    add(name,watts,newMotor?1:0);
+    setNewName("");setNewWatts("");setNewMotor(false);setApplianceError("");
+  };
+  const r=useMemo(()=>calc(rows,hours,type,ah,lf),[rows,hours,type,ah,lf]);
+  const saveQuote=async()=>{
+    const d=dlRef.current;if(!d||!window.jspdf)return;
+    const doc=new window.jspdf.jsPDF({unit:"mm",format:"a4"});
+    const W=210;
+    const wm=()=>{doc.setTextColor(238,238,238);doc.setFont("helvetica","bold");doc.setFontSize(34);
+      for(let k=60;k<290;k+=90){doc.text(BRAND,25,k+40,{angle:30});}
+      doc.setTextColor(20,33,61);};
+    wm();
+    doc.setFillColor(20,33,61);doc.rect(0,0,W,30,"F");
+    doc.setFillColor(232,89,12);doc.rect(0,30,W,2,"F");
+    doc.setTextColor(255,255,255);doc.setFont("helvetica","bold");doc.setFontSize(20);doc.text(BRAND,14,14);
+    doc.setFont("helvetica","normal");doc.setFontSize(10);doc.text("Inverter & Battery Quotation",14,22);
+    doc.setTextColor(20,33,61);
+    let y=42;
+    doc.text("Date: "+new Date().toLocaleDateString("en-IN"),14,y);
+    if(who)doc.text("Customer: "+who,W-14,y,{align:"right"});
+    y+=10;
+    const need=h=>{if(y+h>280){doc.addPage();wm();y=20;}};
+    doc.setFont("helvetica","bold");doc.setFillColor(238,241,247);doc.rect(14,y-5,W-28,8,"F");
+    doc.text("Appliance",16,y);doc.text("W each",110,y,{align:"right"});doc.text("Qty",135,y,{align:"right"});doc.text("Total W",W-16,y,{align:"right"});
+    doc.setFont("helvetica","normal");y+=8;
+    rows.filter(x=>+x.qty>0).forEach(x=>{need(8);doc.text(x.name+(x.motor?" (motor)":""),16,y);doc.text(String(x.watts),110,y,{align:"right"});doc.text(String(x.qty),135,y,{align:"right"});doc.text(String(x.watts*x.qty),W-16,y,{align:"right"});y+=7;});
+    y+=4;
+    const line=(k,v,bold)=>{need(8);doc.setFont("helvetica",bold?"bold":"normal");doc.text(k,16,y);doc.text(v,W-16,y,{align:"right"});y+=7;};
+    line("Connected load",r.conn+" W");
+    line("Working load ("+r.lf+"%)",r.run+" W");
+    line("Backup required",hours+" h");
+    y+=3;doc.setDrawColor(232,89,12);doc.line(14,y-4,W-14,y-4);
+    doc.setTextColor(232,89,12);
+    line("Recommended inverter",fmt(r.va)+" VA, "+r.volt+"V",true);
+    line("Recommended battery",r.total+" x 12V "+ah+"Ah "+(type==="lithium"?"LiFePO4":"Tubular"),true);
+    doc.setTextColor(20,33,61);
+    line("Battery wiring",wiring(r));
+    line("Expected backup","about "+r.backup.toFixed(1)+" h");
+    line("Recommended charger current",fmt(r.charge)+" A");
+    if(window.qrcode){
+      need(52);y+=4;
+      try{const q=window.qrcode(0,"M");q.addData(APP_URL);q.make();const n=q.getModuleCount(),sz=36,c=sz/n,x0=14;
+        doc.setFillColor(255,255,255);doc.rect(x0-2,y-2,sz+4,sz+4,"F");doc.setFillColor(0,0,0);
+        for(let i=0;i<n;i++)for(let j=0;j<n;j++)if(q.isDark(i,j))doc.rect(x0+j*c,y+i*c,c+0.05,c+0.05,"F");
+        doc.setFont("helvetica","bold");doc.setFontSize(11);doc.text("Scan to calculate on your mobile",x0+sz+8,y+14);
+        doc.setFont("helvetica","normal");doc.setFontSize(9);doc.text(BRAND,x0+sz+8,y+21);
+        y+=sz+6;}catch(e){}
+    }
+    doc.setFont("helvetica","normal");doc.setFontSize(8);doc.setTextColor(110,110,110);
+    doc.text("Estimates only. Please confirm the final selection at the shop. (c) "+new Date().getFullYear()+" "+BRAND,W/2,288,{align:"center"});
+    try{await d.save({filename:"Rajkumar-Auto-Electricals-Quote.pdf",data:doc.output("arraybuffer")});}catch(e){}
+  };
+  const copy=async()=>{
+    const t=quote(r,rows,hours,type,ah,who);
+    try{await navigator.clipboard.writeText(t);}catch(e){
+      try{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();document.execCommand("copy");a.remove();}catch(_){}
+    }
+    setCopied(true);setTimeout(()=>setCopied(false),1800);
+  };
+  return html`<main>
+    <section class="card">
+      <h2>1. Select appliances & quantity</h2>
+      ${rows.map(x=>html`<div class="item" key=${x.id}>
+        <div class="nm"><b>${x.name}</b><small>${x.watts} W each${x.motor?" · motor load":""}${x.qty>0?" → "+(x.watts*x.qty)+" W":""}</small></div>
+        <div class="step"><button onClick=${()=>upd(x.id,"qty",Math.max(0,x.qty-1))}>−</button><span class=${x.qty>0?"q on":"q"}>${x.qty}</span><button onClick=${()=>upd(x.id,"qty",Math.min(20,x.qty+1))}>+</button></div>
+      </div>`)}
+      <div class="custom-appliance">
+        <h3>Add a custom appliance</h3>
+        <div class="custom-fields">
+          <label>Appliance name<input value=${newName} placeholder="e.g. Printer" onInput=${e=>setNewName(e.target.value)}/></label>
+          <label>Watts each<input type="number" min="1" step="1" value=${newWatts} placeholder="e.g. 80" onInput=${e=>setNewWatts(e.target.value)}/></label>
+          <label class="motor-check"><input type="checkbox" checked=${newMotor} onChange=${e=>setNewMotor(e.target.checked)}/> Motor load</label>
+          <button class="add custom-add" onClick=${addCustom}>Add appliance</button>
+        </div>
+        ${applianceError?html`<p class="warn" role="alert">${applianceError}</p>`:null}
+      </div>
+      <p class="note">Wattages are typical running loads of common Indian household appliances. Motor loads get an extra start-up allowance in the inverter size.</p>
+      <h2 style=${{marginTop:"18px"}}>2. Backup & battery</h2>
+      <div class="grid2">
+        <div><span>Backup hours needed</span><input type="number" min="0.5" step="0.5" value=${hours} onInput=${e=>setHours(e.target.value)}/></div>
+        <div><span>Battery type</span><select value=${type} onChange=${e=>setType(e.target.value)}><option value="tubular">Tubular (lead-acid)</option><option value="lithium">Lithium (LiFePO4)</option></select></div>
+        <div><span>Battery size</span><select value=${ah} onChange=${e=>setAh(+e.target.value)}>${[100,150,200].map(a=>html`<option key=${a} value=${a}>12V ${a}Ah</option>`)}</select></div>
+        <div><span>Load running at a time (for battery)</span><select value=${lf} onChange=${e=>setLf(+e.target.value)}>${[40,50,60,70].map(p=>html`<option key=${p} value=${p}>${p}% of connected load</option>`)}</select></div>
+        <div><span>Customer name (optional)</span><input placeholder="For the quote" value=${who} onInput=${e=>setWho(e.target.value)}/></div>
+      </div>
+    </section>
+    <section class="card">
+      <p class="brandline">⚡ ${BRAND.toUpperCase()} ⚡</p>
+      <h2>Recommendation</h2>
+      ${!r?html`<p class="note">Enter at least one appliance with its watts and the backup hours to see the suggested inverter and battery.</p>`:html`
+        <div class="kv"><span>Connected load (all appliances)</span><b>${fmt(r.conn)} W</b></div>
+        <div class="kv"><span>Working load (${r.lf}%)</span><b>${fmt(r.run)} W</b></div>
+        <div class="kv"><span>Peak (start-up) load</span><b>${fmt(r.peak)} W</b></div>
+        <div class="kv"><span>Inverter capacity needed</span><b>≈ ${fmt(r.need)} VA</b></div>
+        <div class="kv"><span>Energy for ${hours} h backup</span><b>${fmt(r.wh)} Wh</b></div>
+        <div class="rec"><small>Suggested inverter</small><div class="big">${fmt(r.va)} VA</div><small>Nearest standard size above ${fmt(r.need)} VA · ${r.volt}V system · sine wave recommended</small></div>
+        <div class="rec"><small>Suggested battery bank</small><div class="big">${r.total} × 12V ${ah}Ah</div>
+          <small>${type==="lithium"?"LiFePO4":"Tubular"} · ${wiring(r)} · ${fmt(r.cap)}Ah at ${r.volt}V</small></div>
+        <div class="kv"><span>Expected backup</span><b>≈ ${r.backup.toFixed(1)} h</b></div>
+        <div class="kv"><span>Recommended charger current</span><b>${fmt(r.charge)} A (10% of Ah)</b></div>
+        ${r.peak>r.va*1.1?html`<p class="warn">Load is close to the inverter limit – consider the next size up.</p>`:html`<p class="ok">Inverter has a healthy safety margin.</p>`}
+        <button class="pri" onClick=${copy}>${copied?"Copied ✓":"Copy quote"}</button>
+        ${canDl?html`<button class="add" style=${{width:"100%",marginTop:"8px"}} onClick=${saveQuote}>Download quote (PDF)</button>`:null}
+        <p class="note">Inverter sized on the total connected load plus a 20% margin; battery bank sized on ${r.lf}% of it running for the backup hours. Assumes 0.8 power factor, 85% inverter efficiency and ${type==="lithium"?"90":"50"}% usable battery depth. Actual backup depends on battery age and temperature.</p>`}
+    </section>
+    ${QR_SVG?html`<section class="card qr" style=${{gridColumn:"1 / -1"}}>
+      <div class="qrbox" dangerouslySetInnerHTML=${{__html:QR_SVG}}></div>
+      <div><h2>Scan & calculate on your mobile</h2><p class="note" style=${{marginTop:0}}>Point your phone camera at this code to open the ${BRAND} inverter & battery calculator. No app to install.</p></div>
+    </section>`:null}
+  </main>`;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(html`<${App}/>`);
+
+/* Brand watermark – re-applied if removed */
+(function(){
+  const svg="<svg xmlns='http://www.w3.org/2000/svg' width='360' height='200'><text x='20' y='110' transform='rotate(-22 180 100)' font-family='Arial' font-weight='700' font-size='22' fill='%23888' fill-opacity='0.13'>"+BRAND+"</text></svg>";
+  function ensure(){
+    let d=document.getElementById("wm");
+    if(!d){d=document.createElement("div");d.id="wm";d.setAttribute("aria-hidden","true");document.body.appendChild(d);}
+    d.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:50;background-image:url(\""+"data:image/svg+xml;utf8,"+svg+"\")";
+    if(!/Rajkumar/.test(document.title))document.title=BRAND+" – Inverter & Battery Calculator";
+    const f=document.querySelector("footer");
+    if(f&&!/Rajkumar Auto Electricals/.test(f.textContent))f.insertAdjacentHTML("afterbegin","<b>© 2026 "+BRAND+"</b> · ");
+  }
+  ensure();
+  new MutationObserver(ensure).observe(document.body,{childList:true});
+  setInterval(ensure,2000);
+})();
+</script>
+</body>
+</html>
+
